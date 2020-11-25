@@ -1,46 +1,39 @@
 import React, { Component } from 'react'
+import { getPeople } from '../data/peopleData';
 import PersonCard from './PersonCard';
 import PersonDetail from './PersonDetail';
 
-export default class Person extends Component{
-
+export default class PersonList extends Component {
+    constructor() {
+        super()
+        console.log('[PL] ctor called')
+        console.log(this.props)
+    }
     state = {
-        people: [
-            {
-                id: 1,
-                name: 'sunil',
-                age: 20,
-                location: 'bangalore'
-            },
-            {
-                id: 2,
-                name: 'anil',
-                age: 30,
-                location: 'chennai'
-            },
-            {
-                id: 3,
-                name: 'joydip',
-                age: 40,
-                location: 'mumbai'
-            }
-        ],
-        selectedPerson:null
+        people: [],
+        selectedPerson: null
     }
 
-    // working code expaination for other below code
-    // createPersonCard = (p) => {
-    //     return  <PersonCard person={p}></PersonCard>;
-    //  }
-    //  render() {
-    //      let personcardArray = this.state.people.map(this.createPersonCard);
-    //      return (
-    //          <div>{
-    //              personcardArray
-    //               }
-    //          </div>
-    //      );
-    //  }
+    static getDerivedStateFromProps(newProps, previousState) {
+        console.log('[PL] getDerivedStateFromProps')
+        console.log(newProps)
+        console.log(previousState)
+        // return {
+        //     value: previousState.value + newProps.data
+        // }
+        return null;
+    }
+
+    componentDidMount() {
+        console.log('[PL] mounted...')
+        const peopleArray = getPeople()
+        if (peopleArray !== null && peopleArray.length > 0) {
+            this.setState({
+                people: peopleArray
+            })
+        }
+    }
+
     selectPersonHandler = (personId) => {
         let found = this.state.people.find((p) => p.id === personId);
         this.setState({
@@ -63,33 +56,41 @@ export default class Person extends Component{
             selectedPerson: copyOfFound
         })
     }
-
     render() {
-
+        //getting data from some database/file/restful api app
+        //this.setState({ value: 20 })
+        console.log('[PL] rendered')
+        console.log(this.props)
+        console.log(this.state)
         return (
             <div style={{ width: '600px' }}>
-            <div style={{ float: "left" }}>
                 {
-                    this.state.people.map(
-                        (p) => {
-                            return <PersonCard person={p} key={p.id} click={this.selectPersonHandler}/>
-                        }
-                    )
+                    (this.state.people.length > 0) ?
+                        (
+                            <div style={{ float: "left" }}>
+                                {
+                                    this.state.people.map(
+                                        (p, index) => {
+                                            return <PersonCard person={p} key={p.id} selectPerson={this.selectPersonHandler} />
+                                        }
+                                    )
+                                }
+                            </div>
+                        ) :
+                        (<span>loading....</span>)
                 }
-                </div>
-                <div style={{ float: "right", border: '1px solid red', borderRadius: '5px', margin: '50px', backgroundColor: 'beige' }}>
-                    {
-                    (this.state.selectedPerson !==null)?
-                    (
-                        <PersonDetail personData={this.state.selectedPerson} updatePerson = {this.updatePersonHandler}></PersonDetail>
-                    ):
-                    (
-                        <span> No Person Selected</span>
-                    )
+                <br />
+                {
+                    (this.state.selectedPerson !== null) ?
+                        (
+                            <div style={{ float: "right", border: '1px solid red', borderRadius: '5px', margin: '50px', backgroundColor: 'beige' }}>
+                                <PersonDetail personData={this.state.selectedPerson} updatePerson={this.updatePersonHandler} />
+
+                            </div>
+                        ) :
+                        (<span>please select a person...</span>)
                 }
-                </div>
             </div>
         );
     }
-    
 }

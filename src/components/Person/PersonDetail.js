@@ -9,7 +9,9 @@ function PersonDetail(props) {
     // const passPersonData = (event) => {
     //     updatePerson(event.target.value)
     // }
+    console.log('[PD] rendered')
     return (
+        
         <table style={{ margin: '10px' }}>
             <tr>
                 <td>Name:&nbsp;</td>
